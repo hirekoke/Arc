@@ -1,0 +1,221 @@
+﻿<Window x:Class="TestApp.MainWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:sys="clr-namespace:System;assembly=mscorlib"
+		xmlns:arc="clr-namespace:Arc;assembly=Arc"
+		Title="MainWindow"
+		Height="300"
+		Width="487.155">
+    <Window.Resources>
+        <arc:ArcGeometryCreator x:Key="arcSrc"
+								Center="50,50"
+								RadiusX="50"
+								RadiusY="50"
+								StartAngle="0"
+								Thickness="20"
+								Angle="240" />
+
+        <Storyboard x:Key="arcAnimation">
+            <DoubleAnimation Storyboard.TargetName="arc"
+							 Storyboard.TargetProperty="(StartAngle)"
+							 From="0"
+							 To="360"
+							 Duration="0:0:2"
+							 RepeatBehavior="Forever" />
+
+            <DoubleAnimation Storyboard.TargetName="thickArc"
+							 Storyboard.TargetProperty="(StartAngle)"
+							 From="0"
+							 To="360"
+							 Duration="0:0:2"
+							 RepeatBehavior="Forever" />
+
+            <DoubleAnimation Storyboard.Target="{StaticResource arcSrc}"
+							 Storyboard.TargetProperty="(StartAngle)"
+							 From="0"
+							 To="360"
+							 Duration="0:0:2"
+							 RepeatBehavior="Forever" />
+        </Storyboard>
+
+        <RadialGradientBrush x:Key="radialGradientBrush"
+							 GradientOrigin="0.5,0.5">
+            <GradientStop Color="Red"
+						  Offset="0.7" />
+            <GradientStop Color="Black"
+						  Offset="1.0" />
+        </RadialGradientBrush>
+    </Window.Resources>
+
+    <DockPanel>
+        <Button DockPanel.Dock="Top"
+				Content="Animation start">
+            <Button.Triggers>
+                <EventTrigger RoutedEvent="Button.Click">
+                    <BeginStoryboard Storyboard="{StaticResource arcAnimation}" />
+                </EventTrigger>
+            </Button.Triggers>
+        </Button>
+
+        <StackPanel Orientation="Horizontal"
+					HorizontalAlignment="Center">
+
+            <arc:Arc x:Name="arc"
+					 Width="100"
+					 Height="100"
+					 Stroke="Black"
+					 StrokeThickness="10"
+                     StrokeStartLineCap="Round"
+                     StrokeEndLineCap="Round"
+                     StrokeDashArray="1,2"
+                     StrokeDashCap="Round"
+					 StartAngle="0"
+					 Angle="160"
+                     Margin="5"
+					 IsPie="False" />
+
+            <arc:ThickArc  x:Name="thickArc"
+						   Width="100"
+						   Height="100"
+						   Stroke="Black"
+						   StrokeThickness="3"
+                           StrokeDashArray="2,3"
+                           StrokeDashCap="Round"
+						   StartAngle="0"
+						   Angle="200"
+						   Thickness="20"
+						   IsPie="False"
+                           Margin="5"
+						   Fill="Red" />
+
+            <Rectangle Width="100"
+					   Height="100"
+                       Margin="5"
+					   Clip="{Binding Geometry, Source={StaticResource arcSrc}}"
+					   Fill="{StaticResource radialGradientBrush}" />
+
+            <!-- Gradient Brush along a Circular Path
+                 cf. http://stackoverflow.com/questions/4839666/creating-gradient-brush-along-a-circular-path -->
+            <Canvas Width="100" Height="100" Margin="5"
+                    Clip="{Binding Geometry, Source={StaticResource arcSrc}}">
+                <Canvas Width="100" Height="100">
+                    <Canvas.RenderTransform>
+                        <RotateTransform CenterX="50" CenterY="50" Angle="45" />
+                    </Canvas.RenderTransform>
+                    <Canvas.Resources>
+                        <x:Array x:Key="sampleData"
+							 Type="sys:Object">
+                            <x:Array Type="sys:Object">
+                                <sys:Double>0</sys:Double>
+                                <LinearGradientBrush StartPoint="0,0"
+												 EndPoint="1,0">
+                                    <GradientStop Color="Blue"
+											  Offset="0" />
+                                    <GradientStop Color="Purple"
+											  Offset="0.5" />
+                                    <GradientStop Color="Red"
+											  Offset="1" />
+                                </LinearGradientBrush>
+                            </x:Array>
+                            <x:Array Type="sys:Object">
+                                <sys:Double>90</sys:Double>
+                                <LinearGradientBrush StartPoint="0,0"
+												 EndPoint="1,0">
+                                    <GradientStop Color="Red"
+											  Offset="0" />
+                                    <GradientStop Color="Orange"
+											  Offset="1" />
+                                </LinearGradientBrush>
+                            </x:Array>
+                            <x:Array Type="sys:Object">
+                                <sys:Double>180</sys:Double>
+                                <LinearGradientBrush StartPoint="0,0"
+												 EndPoint="1,0">
+                                    <GradientStop Color="Orange"
+											  Offset="0" />
+                                    <GradientStop Color="Yellow"
+											  Offset="0.5" />
+                                    <GradientStop Color="Green"
+											  Offset="1" />
+                                </LinearGradientBrush>
+                            </x:Array>
+                            <x:Array Type="sys:Object">
+                                <sys:Double>270</sys:Double>
+                                <LinearGradientBrush StartPoint="0,0"
+												 EndPoint="1,0">
+                                    <GradientStop Color="Green"
+											  Offset="0" />
+                                    <GradientStop Color="Blue"
+											  Offset="1" />
+                                </LinearGradientBrush>
+                            </x:Array>
+                        </x:Array>
+                    </Canvas.Resources>
+                    <ItemsControl ItemsSource="{StaticResource sampleData}">
+                        <ItemsControl.OpacityMask>
+                            <RadialGradientBrush Center="0.5,0.5">
+                                <GradientStop Color="Transparent"
+										  Offset="0.95" />
+                                <GradientStop Color="White"
+										  Offset="0.94" />
+                                <GradientStop Color="White"
+										  Offset="0.5" />
+                            </RadialGradientBrush>
+                        </ItemsControl.OpacityMask>
+                        <ItemsControl.Template>
+                            <ControlTemplate TargetType="ItemsControl">
+                                <ItemsPresenter />
+                            </ControlTemplate>
+                        </ItemsControl.Template>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Canvas />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Canvas Width="1"
+									Height="1">
+                                    <Canvas.RenderTransform>
+                                        <RotateTransform Angle="{Binding [0]}"
+													 CenterX="50"
+													 CenterY="50" />
+                                    </Canvas.RenderTransform>
+                                    <Viewport3D Width="100"
+											Height="100">
+                                        <ModelVisual3D>
+                                            <ModelVisual3D.Content>
+                                                <Model3DGroup>
+                                                    <GeometryModel3D>
+                                                        <GeometryModel3D.Geometry>
+                                                            <MeshGeometry3D Positions="0 0 0, 0 1 0, 1 0 0, 1 1 0"
+																		TextureCoordinates="0 1, 0 0, 1 1, 1 0"
+																		TriangleIndices="0 2 1, 2 3 1" />
+                                                        </GeometryModel3D.Geometry>
+                                                        <GeometryModel3D.Material>
+                                                            <DiffuseMaterial Brush="{Binding [1]}" />
+                                                        </GeometryModel3D.Material>
+                                                        <GeometryModel3D.Transform>
+                                                            <MatrixTransform3D Matrix="0.002,0,0,0,-0.499,-0.498,0,-0.998,0,0,1,0,0.499,0.5,0,1" />
+                                                        </GeometryModel3D.Transform>
+                                                    </GeometryModel3D>
+                                                    <AmbientLight Color="White" />
+                                                </Model3DGroup>
+                                            </ModelVisual3D.Content>
+                                        </ModelVisual3D>
+                                        <Viewport3D.Camera>
+                                            <OrthographicCamera Position="0.5 0.5 1"
+															LookDirection="0 0 -1"
+															UpDirection="0 1 0"
+															Width="1" />
+                                        </Viewport3D.Camera>
+                                    </Viewport3D>
+                                </Canvas>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Canvas>
+            </Canvas>
+        </StackPanel>
+    </DockPanel>
+</Window>
